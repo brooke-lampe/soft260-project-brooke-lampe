@@ -56,15 +56,29 @@ loaded from the internet.
         $ sudo make install
         ````
 
-2.  Install `python-slugify` and `osmnx`:
+    7.  Clean up the source code:
+
+        ````
+        $ cd ..
+        $ rm -r spatialindex-src-1.8.5
+        $ rm spatialindex-src-1.8.5.tar.gz
+        ````
+
+2.  Install GDAL:
+
+    ````
+    $ sudo apt-get install libgdal-dev
+    ````
+
+3.  Install `python-slugify` and `osmnx`:
 
     ````
     $ sudo pip3 install --upgrade python-slugify osmnx
     ````
 
-3.  Reboot the VM (to guarantee that `ld` can find `libspatialindex`).
+4.  Reboot the VM (to guarantee that `ld` can find `libspatialindex`).
 
-4.  Configure Apache's `mod_userdir` to allow CGI scripts:
+5.  Configure Apache's `mod_userdir` to allow CGI scripts:
 
     1.  Open the `mod_userdir` configuration file:
 
@@ -72,7 +86,7 @@ loaded from the internet.
         $ kdesu kwrite /etc/apache2/mod_userdir.conf
         ````
 
-    2.  Find the `Options` directive in the block marked
+    2.  Find the `Options` directive inside the block marked
         `<Directory /home/*/public_html>`.
 
     3.  Just after that directive, add the following lines at the same
@@ -91,26 +105,27 @@ loaded from the internet.
         $ sudo service apache2 restart
         ````
 
-5.  In `js/index.js`, change `LOAD_MAPS_FROM_SERVER` from `false` to `true`.
+6.  In `js/index.js`, change `LOAD_MAPS_FROM_SERVER` from `false` to `true`.
     Change `SERVER_MAP_CENTER_ADDRESS` to the address you want the map centered
     on and `SERVER_MAP_RADIUS` to the distance the map should extend from that
     center.
 
-6.  Symlink the project into your Apache user directory:
+7.  Symlink the project into your Apache user directory:
 
     ````
     $ mkdir -p ~/public_html
     $ ln -sT ~/git/soft260_project ~/public_html/soft260_project
     ````
 
-7.  Make sure that the web server has permission to cache maps in the `data`
+8.  Make sure that the web server has permission to cache maps in a `data`
     folder:
 
     ````
+    $ mkdir -p ~/public_html/soft260_project/server/data
     $ chmod 777 ~/public_html/soft260_project/server/data
     ````
 
-8.  To allow access to the app from your laptop's browser (as opposed to the
+9.  To allow access to the app from your laptop's browser (as opposed to the
     VM's browser), take the following steps:
 
     1.  In YaST, under "Firewall" → "Allowed Services", used the "Advanced"
@@ -121,12 +136,12 @@ loaded from the internet.
     adapter so that TCP traffic on port 8080 is forwarded to port 80 of your
     OpenSUSE VM.  (You can leave the IP fields blank.)
 
-9.  To allow access to the app from other computers on the same network, open
+10. To allow access to the app from other computers on the same network, open
     port 8080 on your laptop's firewall.  Use this option with care; while your
     have the port open and the VM running, anyone on the same network will be
     able to see (and possibly plagiarize) your source code.
 
-10. To run the app, open on of the following URLs:
+11. To run the app, open on of the following URLs:
 
     *   <http://localhost/~cse/soft260_project/index.html> (from within your
         VM),
@@ -136,5 +151,5 @@ loaded from the internet.
         `IP_ADDRESS` is your laptop's IP address (from a browser on another
         machine).
 
-11. To run the unit tests, open a similar URL, but replace `index.html` with
+12. To run the unit tests, open a similar URL, but replace `index.html` with
     `unit_tests/unit_tests.html`.

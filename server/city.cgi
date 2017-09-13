@@ -2,8 +2,11 @@
 
 import cgi
 import slugify
-import osmnx
 import json
+
+import matplotlib
+matplotlib.use('Agg')  # Select a Matplotlib backend that's guaranteed to work in headless mode before loading OSMnx.
+import osmnx
 
 
 def load_cached_graph(filename):
