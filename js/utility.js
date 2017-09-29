@@ -8,9 +8,13 @@ Array.prototype.top = function top(index = 0) {
 
 Array.prototype.reverse = function reverse() {
   const result = [];
+
   for (let i = this.length; i--;) {
     result.push(this[i]);
   }
+
+  console.assert(length === result.length, 'Error: the length of the original array is not the same as the length of the current array');
+
   return result;
 };
 
