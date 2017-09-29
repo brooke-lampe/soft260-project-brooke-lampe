@@ -242,11 +242,17 @@ class Route {
   }
 
   patch(...path) {
+    console.assert(path[0] !== path[path.length - 1], 'Error: The first and last vertices of the path are the same.');
+    console.assert(path.length > 1, 'Error: Patching path must be greater than 1');
+
     // order matters:
     for (let i = path.length - 1; i--;) {
       this._addArc(path[i], path[i + 1]);
     }
     this.city.restart();
+
+    console.assert(this.hasInCore(path[0]), 'Error: first vertex not in core.');
+    console.assert(this.hasInCore(path[path.length - 1]), 'Error: last vertex not in core.');
   }
 
   _disposeWaypoint(waypoint) {
