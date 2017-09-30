@@ -99,3 +99,70 @@ QUnit.test('find a nonexistent path', (assert) => {
   graph.addEdge('b', new UndirectedEdge(7), 'c');
   assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c'), undefined);
 });
+
+QUnit.test('find the shortest path from a vertex to a neighbor in a square', (assert) => {
+  const graph = new UndirectedGraph();
+  graph.addVertex('a');
+  graph.addVertex('b');
+  graph.addVertex('c');
+  graph.addVertex('d');
+  graph.addEdge('a', new UndirectedEdge(5), 'b');
+  graph.addEdge('b', new UndirectedEdge(5), 'c');
+  graph.addEdge('c', new UndirectedEdge(5), 'd');
+  graph.addEdge('d', new UndirectedEdge(5), 'a');
+  // the search should find the shortest path in terms of number of vertices, not total weighted length
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'b'), ['a', 'b']);
+});
+
+QUnit.test('find the shortest path from a vertex to a neighbor in a rectangle with diagonals', (assert) => {
+  const graph = new UndirectedGraph();
+  graph.addVertex('a');
+  graph.addVertex('b');
+  graph.addVertex('c');
+  graph.addVertex('d');
+  graph.addEdge('a', new UndirectedEdge(4), 'b');
+  graph.addEdge('b', new UndirectedEdge(3), 'c');
+  graph.addEdge('c', new UndirectedEdge(4), 'd');
+  graph.addEdge('d', new UndirectedEdge(3), 'a');
+  graph.addEdge('a', new UndirectedEdge(5), 'c');
+  graph.addEdge('b', new UndirectedEdge(5), 'd');
+  // the search should find the shortest path in terms of number of vertices, not total weighted length
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c'), ['a', 'c']);
+});
+
+QUnit.test('find the shortest path from a vertex to a neighbor without a direct path', (assert) => {
+  const graph = new UndirectedGraph();
+  graph.addVertex('a');
+  graph.addVertex('b');
+  graph.addVertex('c');
+  graph.addVertex('d');
+  graph.addVertex('e');
+  graph.addEdge('a', new UndirectedEdge(5), 'b');
+  graph.addEdge('b', new UndirectedEdge(5), 'c');
+  graph.addEdge('c', new UndirectedEdge(5), 'd');
+  graph.addEdge('d', new UndirectedEdge(5), 'a');
+  graph.addEdge('b', new UndirectedEdge(5), 'e');
+  graph.addEdge('c', new UndirectedEdge(5), 'e');
+  // the search should find the shortest path in terms of number of vertices, not total weighted length
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'e'), ['a', 'b', 'e']);
+});
+
+QUnit.test('find the shortest path from a vertex to a neighbor in a complex graph', (assert) => {
+  const graph = new UndirectedGraph();
+  graph.addVertex('a');
+  graph.addVertex('b');
+  graph.addVertex('c');
+  graph.addVertex('d');
+  graph.addVertex('e');
+  graph.addVertex('f');
+  graph.addEdge('a', new UndirectedEdge(4), 'b');
+  graph.addEdge('b', new UndirectedEdge(3), 'c');
+  graph.addEdge('c', new UndirectedEdge(4), 'd');
+  graph.addEdge('d', new UndirectedEdge(3), 'a');
+  graph.addEdge('d', new UndirectedEdge(5), 'b');
+  graph.addEdge('b', new UndirectedEdge(5), 'e');
+  graph.addEdge('c', new UndirectedEdge(5), 'e');
+  graph.addEdge('e', new UndirectedEdge(5), 'f');
+  // the search should find the shortest path in terms of number of vertices, not total weighted length
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'f'), ['a', 'b', 'e', 'f']);
+});
