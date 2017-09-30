@@ -2,6 +2,27 @@ QUnit.module('undirected_graph.js');
 /* globals QUnit UndirectedEdge UndirectedGraph shortestUndirectedPath */
 /* eslint-disable no-magic-numbers */
 
+function projection(vertex) {
+  let value = 4;
+
+  if (vertex === 'a' || vertex === 'b') {
+    value = 1;
+    return value;
+  }
+
+  if (vertex === 'c' || vertex === 'd') {
+    value = 2;
+    return value;
+  }
+
+  if (vertex === 'e' || vertex === 'f') {
+    value = 3;
+    return value;
+  }
+
+  return value;
+}
+
 QUnit.test('find the nonexistent neighbors of a vertex', (assert) => {
   const graph = new UndirectedGraph();
   graph.addVertex('a');
@@ -165,4 +186,36 @@ QUnit.test('find the shortest path from a vertex to a neighbor in a complex grap
   graph.addEdge('e', new UndirectedEdge(5), 'f');
   // the search should find the shortest path in terms of number of vertices, not total weighted length
   assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'f'), ['a', 'b', 'e', 'f']);
+});
+
+QUnit.test('find the shortest path from a vertex to a neighbor in a square while exercising projection parameter', (assert) => {
+  const graph = new UndirectedGraph();
+  graph.addVertex('a');
+  graph.addVertex('b');
+  graph.addVertex('c');
+  graph.addVertex('d');
+  graph.addEdge('a', new UndirectedEdge(5), 'b');
+  graph.addEdge('b', new UndirectedEdge(5), 'c');
+  graph.addEdge('c', new UndirectedEdge(5), 'd');
+  graph.addEdge('d', new UndirectedEdge(5), 'a');
+  const projected = projection(graph.vertices.b);
+  // the search should find the shortest path in terms of number of vertices, not total weighted length
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'b', projected), ['a', 'b']);
+});
+
+QUnit.test('find the shortest path from a vertex to a neighbor in a rectangle with diagonals while exercising the projection parameter', (assert) => {
+  const graph = new UndirectedGraph();
+  graph.addVertex('a');
+  graph.addVertex('b');
+  graph.addVertex('c');
+  graph.addVertex('d');
+  graph.addEdge('a', new UndirectedEdge(4), 'b');
+  graph.addEdge('b', new UndirectedEdge(3), 'c');
+  graph.addEdge('c', new UndirectedEdge(4), 'd');
+  graph.addEdge('d', new UndirectedEdge(3), 'a');
+  graph.addEdge('a', new UndirectedEdge(5), 'c');
+  graph.addEdge('b', new UndirectedEdge(5), 'd');
+  const projected = projection(graph.vertices.c);
+  // the search should find the shortest path in terms of number of vertices, not total weighted length
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c', projected), ['a', 'c']);
 });
