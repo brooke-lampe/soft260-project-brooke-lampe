@@ -79,8 +79,12 @@ function shortestUndirectedPath(graph, source, destinationPredicate, projection 
         const result = helper();
         stack.pop();
         if (result !== undefined) {
+          const destination = result.pop();
           console.assert(result[0] === source, 'Result failed to begin at the source');
-          console.assert(destinationPredicate(result.length - 1), 'Result failed to satisfy the destination predicate');
+          console.assert(destinationPredicate(destination), 'Result failed to satisfy the destination predicate');
+          console.assert(!result.every(destinationPredicate));
+          result.push(destination);
+          console.assert(result.every((value, index) => graph.adjacencyMatrix[index][index + 1] !== undefined));
           return result;
         }
       }

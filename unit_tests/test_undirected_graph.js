@@ -3,20 +3,20 @@ QUnit.module('undirected_graph.js');
 /* eslint-disable no-magic-numbers */
 
 function projection(vertex) {
-  let value = 4;
+  let value = 'g';
 
   if (vertex === 'a' || vertex === 'b') {
-    value = 1;
+    value = 'a';
     return value;
   }
 
   if (vertex === 'c' || vertex === 'd') {
-    value = 2;
+    value = 'c';
     return value;
   }
 
   if (vertex === 'e' || vertex === 'f') {
-    value = 3;
+    value = 'e';
     return value;
   }
 
@@ -121,36 +121,6 @@ QUnit.test('find a nonexistent path', (assert) => {
   assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c'), undefined);
 });
 
-QUnit.test('find the shortest path from a vertex to a neighbor in a square', (assert) => {
-  const graph = new UndirectedGraph();
-  graph.addVertex('a');
-  graph.addVertex('b');
-  graph.addVertex('c');
-  graph.addVertex('d');
-  graph.addEdge('a', new UndirectedEdge(5), 'b');
-  graph.addEdge('b', new UndirectedEdge(5), 'c');
-  graph.addEdge('c', new UndirectedEdge(5), 'd');
-  graph.addEdge('d', new UndirectedEdge(5), 'a');
-  // the search should find the shortest path in terms of number of vertices, not total weighted length
-  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'b'), ['a', 'b']);
-});
-
-QUnit.test('find the shortest path from a vertex to a neighbor in a rectangle with diagonals', (assert) => {
-  const graph = new UndirectedGraph();
-  graph.addVertex('a');
-  graph.addVertex('b');
-  graph.addVertex('c');
-  graph.addVertex('d');
-  graph.addEdge('a', new UndirectedEdge(4), 'b');
-  graph.addEdge('b', new UndirectedEdge(3), 'c');
-  graph.addEdge('c', new UndirectedEdge(4), 'd');
-  graph.addEdge('d', new UndirectedEdge(3), 'a');
-  graph.addEdge('a', new UndirectedEdge(5), 'c');
-  graph.addEdge('b', new UndirectedEdge(5), 'd');
-  // the search should find the shortest path in terms of number of vertices, not total weighted length
-  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c'), ['a', 'c']);
-});
-
 QUnit.test('find the shortest path from a vertex to a neighbor without a direct path', (assert) => {
   const graph = new UndirectedGraph();
   graph.addVertex('a');
@@ -186,6 +156,36 @@ QUnit.test('find the shortest path from a vertex to a neighbor in a complex grap
   graph.addEdge('e', new UndirectedEdge(5), 'f');
   // the search should find the shortest path in terms of number of vertices, not total weighted length
   assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'f'), ['a', 'b', 'e', 'f']);
+});
+
+QUnit.test('find the shortest path from a vertex to a neighbor in a square', (assert) => {
+  const graph = new UndirectedGraph();
+  graph.addVertex('a');
+  graph.addVertex('b');
+  graph.addVertex('c');
+  graph.addVertex('d');
+  graph.addEdge('a', new UndirectedEdge(5), 'b');
+  graph.addEdge('b', new UndirectedEdge(5), 'c');
+  graph.addEdge('c', new UndirectedEdge(5), 'd');
+  graph.addEdge('d', new UndirectedEdge(5), 'a');
+  // the search should find the shortest path in terms of number of vertices, not total weighted length
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'b'), ['a', 'b']);
+});
+
+QUnit.test('find the shortest path from a vertex to a neighbor in a rectangle with diagonals', (assert) => {
+  const graph = new UndirectedGraph();
+  graph.addVertex('a');
+  graph.addVertex('b');
+  graph.addVertex('c');
+  graph.addVertex('d');
+  graph.addEdge('a', new UndirectedEdge(4), 'b');
+  graph.addEdge('b', new UndirectedEdge(3), 'c');
+  graph.addEdge('c', new UndirectedEdge(4), 'd');
+  graph.addEdge('d', new UndirectedEdge(3), 'a');
+  graph.addEdge('a', new UndirectedEdge(5), 'c');
+  graph.addEdge('b', new UndirectedEdge(5), 'd');
+  // the search should find the shortest path in terms of number of vertices, not total weighted length
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c'), ['a', 'c']);
 });
 
 QUnit.test('find the shortest path from a vertex to a neighbor in a square while exercising projection parameter', (assert) => {
