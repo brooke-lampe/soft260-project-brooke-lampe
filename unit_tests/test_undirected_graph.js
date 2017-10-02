@@ -3,21 +3,14 @@ QUnit.module('undirected_graph.js');
 /* eslint-disable no-magic-numbers */
 
 function projection(vertex) {
-  let value = 'w';
+  let value = vertex;
 
-  if (vertex === 'a' || vertex === 'b') {
-    value = 'x';
-    return value;
+  if (vertex === 'b') {
+    value = 'a';
   }
 
-  if (vertex === 'c' || vertex === 'd') {
-    value = 'y';
-    return value;
-  }
-
-  if (vertex === 'e' || vertex === 'f') {
-    value = 'z';
-    return value;
+  if (vertex === 'd') {
+    value = 'c';
   }
 
   return value;
@@ -188,7 +181,19 @@ QUnit.test('find the shortest path from a vertex to a neighbor in a rectangle wi
   assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c'), ['a', 'c']);
 });
 
-QUnit.test('find the shortest path from a vertex to a neighbor in a square while exercising projection parameter', (assert) => {
+QUnit.test('find the shortest path in a triangle while exercising projection parameter', (assert) => {
+  const graph = new UndirectedGraph();
+  graph.addVertex('a');
+  graph.addVertex('b');
+  graph.addVertex('c');
+  graph.addEdge('a', new UndirectedEdge(5), 'b');
+  graph.addEdge('b', new UndirectedEdge(5), 'c');
+  graph.addEdge('c', new UndirectedEdge(5), 'a');
+  // the search should find the shortest path in terms of number of vertices, not total weighted length
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c', projection), ['a', 'c']);
+});
+
+QUnit.test('find the shortest path in a diamond while exercising the projection parameter', (assert) => {
   const graph = new UndirectedGraph();
   graph.addVertex('a');
   graph.addVertex('b');
@@ -198,22 +203,22 @@ QUnit.test('find the shortest path from a vertex to a neighbor in a square while
   graph.addEdge('b', new UndirectedEdge(5), 'c');
   graph.addEdge('c', new UndirectedEdge(5), 'd');
   graph.addEdge('d', new UndirectedEdge(5), 'a');
+  graph.addEdge('b', new UndirectedEdge(5), 'd');
   // the search should find the shortest path in terms of number of vertices, not total weighted length
-  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'b', projection), ['a', 'b']);
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c', projection), ['a', 'd']);
 });
 
-QUnit.test('find the shortest path from a vertex to a neighbor in a rectangle with diagonals while exercising the projection parameter', (assert) => {
+QUnit.test('find the shortest path as determined by the projection parameter', (assert) => {
   const graph = new UndirectedGraph();
   graph.addVertex('a');
   graph.addVertex('b');
   graph.addVertex('c');
-  graph.addVertex('d');
-  graph.addEdge('a', new UndirectedEdge(4), 'b');
-  graph.addEdge('b', new UndirectedEdge(3), 'c');
-  graph.addEdge('c', new UndirectedEdge(4), 'd');
-  graph.addEdge('d', new UndirectedEdge(3), 'a');
-  graph.addEdge('a', new UndirectedEdge(5), 'c');
-  graph.addEdge('b', new UndirectedEdge(5), 'd');
+  graph.addVertex('e');
+  graph.addEdge('a', new UndirectedEdge(5), 'b');
+  graph.addEdge('b', new UndirectedEdge(5), 'c');
+  graph.addEdge('c', new UndirectedEdge(5), 'e');
+  graph.addEdge('e', new UndirectedEdge(5), 'a');
+  graph.addEdge('b', new UndirectedEdge(5), 'e');
   // the search should find the shortest path in terms of number of vertices, not total weighted length
-  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c', projection), ['a', 'c']);
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c', projection), ['a', 'e', 'c']);
 });
