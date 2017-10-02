@@ -3,20 +3,20 @@ QUnit.module('undirected_graph.js');
 /* eslint-disable no-magic-numbers */
 
 function projection(vertex) {
-  let value = 'g';
+  let value = 'w';
 
   if (vertex === 'a' || vertex === 'b') {
-    value = 'a';
+    value = 'x';
     return value;
   }
 
   if (vertex === 'c' || vertex === 'd') {
-    value = 'c';
+    value = 'y';
     return value;
   }
 
   if (vertex === 'e' || vertex === 'f') {
-    value = 'e';
+    value = 'z';
     return value;
   }
 

@@ -65,31 +65,55 @@ class UndirectedGraph {
 }
 
 function shortestUndirectedPath(graph, source, destinationPredicate, projection = identity) {
-  const stack = [source];
+  const path = new Map();
+  path.set(source, undefined);
+
   const visited = new Set();
-  function helper() {
-    const endpoint = stack.top();
-    if (destinationPredicate(endpoint)) {
-      return stack.concat();
-    }
-    visited.add(projection(endpoint));
-    for (const neighbor of graph.getNeighbors(endpoint)) {
+  visited.add(projection(source));
+
+  const worklist = [source];
+
+  let destination = undefined;
+
+  while (worklist.length > 0) {
+    const workitem = worklist.shift();
+    const neighbors = graph.getNeighbors(workitem);
+    for (const neighbor of neighbors) {
       if (!visited.has(projection(neighbor))) {
-        stack.push(neighbor);
-        const result = helper();
-        stack.pop();
-        if (result !== undefined) {
-          const destination = result.pop();
-          console.assert(result[0] === source, 'Result failed to begin at the source');
-          console.assert(destinationPredicate(destination), 'Result failed to satisfy the destination predicate');
-          console.assert(!result.every(destinationPredicate));
-          result.push(destination);
-          console.assert(result.every((value, index) => graph.adjacencyMatrix[index][index + 1] !== undefined));
-          return result;
-        }
+        path.set(neighbor, workitem);
+        worklist.push(neighbor);
+        visited.add(projection(neighbor));
       }
     }
+    if (destinationPredicate(workitem)) {
+      destination = workitem;
+      break;
+    }
+  }
+
+  if (destination === undefined) {
     return undefined;
   }
-  return helper();
+
+  const array = [destination];
+  let vertex = path.get(destination);
+
+  while (vertex !== undefined) {
+    array.unshift(vertex);
+    vertex = path.get(vertex);
+  }
+
+  if (array.length === 1) {
+    console.assert(array[0] === source, 'Path failed to begin at the source');
+    console.assert(destinationPredicate(array[0]), 'Endpoint failed to satisfy the destination predicate');
+  } else {
+    const endpoint = array.pop();
+    console.assert(array[0] === source, 'Path failed to begin at the source');
+    console.assert(destinationPredicate(endpoint), 'Endpoint failed to satisfy the destination predicate');
+    console.assert(!array.every(destinationPredicate), 'Non-endpoint vertices satisfy destination predicate');
+    array.push(endpoint);
+    console.assert(array.every((value, index) => graph.adjacencyMatrix[index][index + 1] !== undefined || array.length <= index + 1));
+  }
+
+  return array.concat();
 }
