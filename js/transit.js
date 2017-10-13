@@ -534,6 +534,10 @@ class Passenger extends Agent {
     this.vertex = vertex;
   }
 
+  get duration() {
+    return this.plan.top().eta;
+  }
+
   get vertex() {
     if (this._departureTime !== undefined && this._departureTime < this.simulation.currentTime) {
       return undefined;
