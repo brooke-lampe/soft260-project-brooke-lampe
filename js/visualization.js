@@ -271,7 +271,7 @@ $.widget('transit.visualization', {
     //  this will also work
     //  this.overlay = $('<div class="overlay"><h1>Passengers with the Longest Journeys</h1><ul><li></li><li></li><li></li><li></li><li></li></ul></div>').appendTo(this.element);
     this.overlay = $('<div></div>', {class: 'overlay'}).appendTo(this.element);
-    this.heading = $('<h1></h1>', {text: this.option('headingText')}).appendTo(this.overlay);
+    this.heading = $('<h2></h2>', {text: this.option('headingText')}).appendTo(this.overlay);
     this.unordered = $('<ul></ul>').appendTo(this.overlay);
   },
 
@@ -360,7 +360,15 @@ $.widget('transit.visualization', {
     }
 
     this.overlay.find('ul').empty();
-    $('<li></li>', {text: this._city.currentTime}).appendTo(this.unordered);
+
+    const count = 5;
+    const L = this._city.findTopKDuration(count);
+
+    for (let i = 0; i < L.length; i++) {
+      $('<li></li>', {text: 'Passenger '.concat(L[i].name).concat(' (LENGTH = ').concat(L[i].duration).concat(')')}).appendTo(this.unordered);
+    }
+    //  Will show current time
+    //  $('<li></li>', {text: this._city.currentTime}).appendTo(this.unordered);
   },
 
   getSlowness() {
