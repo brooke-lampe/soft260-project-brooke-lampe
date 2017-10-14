@@ -1,30 +1,6 @@
 /* exported Vertex City Route Bus Passenger */
 /* globals shortestUndirectedPath Simulation Decision Agent */
 
-function partition(L) {
-  const p = L[0];
-  let i = 1;
-  let j = L.length - 1;
-  let placeholder = undefined;
-
-  while (i < j) {
-    if (L[j] >= p) {
-      j--;
-    } else if (L[i] < p) {
-      i++;
-    } else {
-      placeholder = L[i];
-      L[i] = L[j];
-      L[j] = placeholder;
-    }
-  }
-  placeholder = L[0];
-  L[0] = L[i];
-  L[i] = placeholder;
-
-  return [L, i];
-}
-
 class Vertex {
   constructor(name) {
     this.name = name;
@@ -54,23 +30,24 @@ class City extends Simulation {
   }
 
   findTopK(L, k) {
-    if (L.length === 1) {
-      return L[0];
+    const l = Math.floor(L.length / 2);
+    const A = [];
+    const B = [];
+
+    for (let i = 0; i < L.length; i++) {
+      if (L[i] < L[l]) {
+        A.push(L[i]);
+      } else if (L[i] > L[l]) {
+        B.push(L[i]);
+      }
     }
 
-    const placeholder = partition(L);
-    const M = placeholder[0];
-    const i = placeholder[1];
-
-    if (i > k) {
-      return this.findTopK(M.slice(0, i - 1), k);
+    if (k <= B.length) {
+      return this.findTopK(B, k);
+    } else if (k > L.length - A.length) {
+      return this.findTopK(A, k - (L.length - A.length));
     }
-
-    if (i < k) {
-      return this.findTopK(M.slice(i + 1, L.length - 1), k - i - 1);
-    }
-
-    return M[i];
+    return L[l];
   }
 
   findTopKDuration(count) {
@@ -78,24 +55,25 @@ class City extends Simulation {
     const duration = [];
     let i = 0;
 
-    //Removed for debugging
-    //if (this._passengers.length <= count) {
-    //  return this._passengers;
-    //}
+    if (count === 0) {
+      return [];
+    } else if (Math.floor(count) !== count) {
+      return undefined;
+    } else if (count < 0) {
+      return undefined;
+    } else if (this._passengers.length <= count) {
+      return this._passengers;
+    }
 
     for (i = 0; i < this._passengers.length; i++) {
       L.push(this._passengers[i].duration);
     }
 
-    if (L.length <= count) {    //remove this if statement after debugging
-      return L;
-    }
-
     const topK = this.findTopK(L, count);
 
     for (i = 0; i < this._passengers.length; i++) {
-      if (this._passengers[i] >= topK) {
-        duration.push(this._passengers[i].duration);  //remove duration when done debugging
+      if (this._passengers[i].duration >= topK) {
+        duration.push(this._passengers[i]);
       }
     }
     return duration;

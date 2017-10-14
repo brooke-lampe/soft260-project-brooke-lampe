@@ -683,7 +683,7 @@ QUnit.test('Simulate one passenger for findTopKDuration (2)', (assert) => {
   passenger.source = a;
   passenger.destination = c;
   passenger.start();
-  assert.deepEqual(city.findTopKDuration(1), [passenger.duration]);
+  assert.deepEqual(city.findTopKDuration(1), [passenger]);
 });
 
 QUnit.test('Simulate less passengers than count in findTopKDuration (3)', (assert) => {
@@ -713,14 +713,14 @@ QUnit.test('Simulate less passengers than count in findTopKDuration (3)', (asser
   passengerB.destination = d;
   passengerB.start();
   const passengerC = new Passenger(city, 'pc', 6.0, b);
-  passengerC.source = c;
+  passengerC.source = b;
   passengerC.destination = d;
   passengerC.start();
-  const passengerD = new Passenger(city, 'pd', 8.0, b);
+  const passengerD = new Passenger(city, 'pd', 8.0, a);
   passengerD.source = a;
   passengerD.destination = d;
   passengerD.start();
-  assert.deepEqual(city.findTopKDuration(5), [passengerA.duration, passengerB.duration, passengerC.duration, passengerD.duration]);
+  assert.deepEqual(city.findTopKDuration(5), [passengerA, passengerB, passengerC, passengerD]);
 });
 
 QUnit.test('Simulate one more passenger than count in findTopKDuration (4)', (assert) => {
@@ -749,7 +749,7 @@ QUnit.test('Simulate one more passenger than count in findTopKDuration (4)', (as
   passengerB.source = b;
   passengerB.destination = d;
   passengerB.start();
-  assert.deepEqual(city.findTopKDuration(1), [passengerA.duration]);
+  assert.deepEqual(city.findTopKDuration(1), [passengerB]);
 });
 
 QUnit.test('Simulate more passengers than count for findTopKDuration (5)', (assert) => {
@@ -779,14 +779,14 @@ QUnit.test('Simulate more passengers than count for findTopKDuration (5)', (asse
   passengerB.destination = d;
   passengerB.start();
   const passengerC = new Passenger(city, 'pc', 6.0, b);
-  passengerC.source = c;
+  passengerC.source = b;
   passengerC.destination = d;
   passengerC.start();
-  const passengerD = new Passenger(city, 'pd', 8.0, b);
+  const passengerD = new Passenger(city, 'pd', 8.0, a);
   passengerD.source = a;
   passengerD.destination = d;
   passengerD.start();
-  assert.deepEqual(city.findTopKDuration(5), [passengerB.duration, passengerC.duration, passengerD.duration]);
+  assert.deepEqual(city.findTopKDuration(3), [passengerB, passengerC, passengerD]);
 });
 
 QUnit.test('Simulate many more passengers than count for findTopKDuration (6)', (assert) => {
@@ -816,30 +816,30 @@ QUnit.test('Simulate many more passengers than count for findTopKDuration (6)', 
   passengerB.destination = d;
   passengerB.start();
   const passengerC = new Passenger(city, 'pc', 6.0, b);
-  passengerC.source = c;
+  passengerC.source = b;
   passengerC.destination = d;
   passengerC.start();
-  const passengerD = new Passenger(city, 'pd', 8.0, b);
+  const passengerD = new Passenger(city, 'pd', 8.0, a);
   passengerD.source = a;
   passengerD.destination = d;
   passengerD.start();
-  const passengerE = new Passenger(city, 'pd', 9.0, b);
+  const passengerE = new Passenger(city, 'pe', 9.0, a);
   passengerE.source = a;
   passengerE.destination = d;
   passengerE.start();
-  const passengerF = new Passenger(city, 'pd', 7.0, b);
+  const passengerF = new Passenger(city, 'pf', 7.0, a);
   passengerF.source = a;
   passengerF.destination = d;
   passengerF.start();
-  const passengerG = new Passenger(city, 'pd', 5.0, b);
+  const passengerG = new Passenger(city, 'pg', 5.0, a);
   passengerG.source = a;
   passengerG.destination = d;
   passengerG.start();
-  const passengerH = new Passenger(city, 'pd', 3.0, b);
+  const passengerH = new Passenger(city, 'ph', 3.0, a);
   passengerH.source = a;
   passengerH.destination = d;
   passengerH.start();
-  assert.deepEqual(city.findTopKDuration(2), [passengerD.duration, passengerE.duration]);
+  assert.deepEqual(city.findTopKDuration(2), [passengerD, passengerE]);
 });
 
 QUnit.test('Simulate many passengers and many count for findTopKDuration (7)', (assert) => {
@@ -869,30 +869,30 @@ QUnit.test('Simulate many passengers and many count for findTopKDuration (7)', (
   passengerB.destination = d;
   passengerB.start();
   const passengerC = new Passenger(city, 'pc', 6.0, b);
-  passengerC.source = c;
+  passengerC.source = b;
   passengerC.destination = d;
   passengerC.start();
-  const passengerD = new Passenger(city, 'pd', 8.0, b);
+  const passengerD = new Passenger(city, 'pd', 8.0, a);
   passengerD.source = a;
   passengerD.destination = d;
   passengerD.start();
-  const passengerE = new Passenger(city, 'pd', 9.0, b);
+  const passengerE = new Passenger(city, 'pe', 9.0, a);
   passengerE.source = a;
   passengerE.destination = d;
   passengerE.start();
-  const passengerF = new Passenger(city, 'pd', 7.0, b);
+  const passengerF = new Passenger(city, 'pf', 7.0, a);
   passengerF.source = a;
   passengerF.destination = d;
   passengerF.start();
-  const passengerG = new Passenger(city, 'pd', 5.0, b);
+  const passengerG = new Passenger(city, 'pg', 5.0, a);
   passengerG.source = a;
   passengerG.destination = d;
   passengerG.start();
-  const passengerH = new Passenger(city, 'pd', 3.0, b);
+  const passengerH = new Passenger(city, 'ph', 3.0, a);
   passengerH.source = a;
   passengerH.destination = d;
   passengerH.start();
-  assert.deepEqual(city.findTopKDuration(6), [passengerB.duration, passengerC.duration, passengerD.duration, passengerE.duration, passengerF.duration, passengerG.duration]);
+  assert.deepEqual(city.findTopKDuration(6), [passengerB, passengerC, passengerD, passengerE, passengerF, passengerG]);
 });
 
 QUnit.test('simulate a passenger having no path', (assert) => {
