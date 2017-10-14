@@ -1,6 +1,30 @@
 /* exported Vertex City Route Bus Passenger */
 /* globals shortestUndirectedPath Simulation Decision Agent */
 
+function partition(L) {
+  const p = L[0];
+  let i = 1;
+  let j = L.length - 1;
+  let placeholder = undefined;
+
+  while (i < j) {
+    if (L[j] >= p) {
+      j--;
+    } else if (L[i] < p) {
+      i++;
+    } else {
+      placeholder = L[i];
+      L[i] = L[j];
+      L[j] = placeholder;
+    }
+  }
+  placeholder = L[0];
+  L[0] = L[i];
+  L[i] = placeholder;
+
+  return [L, i];
+}
+
 class Vertex {
   constructor(name) {
     this.name = name;
@@ -27,6 +51,54 @@ class City extends Simulation {
     this.driveGraph = driveGraph;
     this.routes = [];
     this._passengers = [];
+  }
+
+  findTopK(L, k) {
+    if (L.length === 1) {
+      return L[0];
+    }
+
+    const placeholder = partition(L);
+    const M = placeholder[0];
+    const i = placeholder[1];
+
+    if (i > k) {
+      return this.findTopK(M.slice(0, i - 1), k);
+    }
+
+    if (i < k) {
+      return this.findTopK(M.slice(i + 1, L.length - 1), k - i - 1);
+    }
+
+    return M[i];
+  }
+
+  findTopKDuration(count) {
+    const L = [];
+    const duration = [];
+    let i = 0;
+
+    //Removed for debugging
+    //if (this._passengers.length <= count) {
+    //  return this._passengers;
+    //}
+
+    for (i = 0; i < this._passengers.length; i++) {
+      L.push(this._passengers[i].duration);
+    }
+
+    if (L.length <= count) {    //remove this if statement after debugging
+      return L;
+    }
+
+    const topK = this.findTopK(L, count);
+
+    for (i = 0; i < this._passengers.length; i++) {
+      if (this._passengers[i] >= topK) {
+        duration.push(this._passengers[i].duration);  //remove duration when done debugging
+      }
+    }
+    return duration;
   }
 
   chooseRandomWalkVertex() {

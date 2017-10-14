@@ -25,6 +25,24 @@ body {
   height: 100%;
 }
 
+.overlay {
+  position: absolute;
+  z-index: 10; /* leave a gap for possible future z-indices */
+  left: 0;
+  top: 0;
+  width: 33%;
+  max-height: 50%;
+}
+
+div.overlay {
+  background-color: rgba(0, 0, 255, 0.5);
+  font-size: 10pt;
+  padding: 10pt;
+  color: rgba(255, 255, 255, 1);
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .controls {
   display: flex;
   flex-flow: row nowrap;
