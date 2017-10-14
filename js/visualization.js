@@ -365,7 +365,7 @@ $.widget('transit.visualization', {
     const L = this._city.findTopKDuration(count);
 
     for (let i = 0; i < L.length; i++) {
-      $('<li></li>', {text: 'Passenger '.concat(L[i].name).concat(' (LENGTH = ').concat(L[i].duration).concat(')')}).appendTo(this.unordered);
+      $('<li></li>', {text: 'Passenger '.concat(L[i].name).concat(' (LENGTH = ').concat(parseFloat(L[i].duration).toFixed(2)).concat(')')}).appendTo(this.unordered);
     }
     //  Will show current time
     //  $('<li></li>', {text: this._city.currentTime}).appendTo(this.unordered);
