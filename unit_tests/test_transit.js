@@ -614,7 +614,7 @@ QUnit.test('Simulate a passenger to check duration (2)', (assert) => {
   assert.deepEqual(passenger.duration, 6);
 });
 
-QUnit.test('Simulate a passenger to check duration (3)', (assert) => {
+QUnit.test('Simulate passengers to check duration (3)', (assert) => {
   const a = new Vertex('a');
   const b = new Vertex('b');
   const c = new Vertex('c');
@@ -632,12 +632,18 @@ QUnit.test('Simulate a passenger to check duration (3)', (assert) => {
   graph.addEdge(d, new UndirectedEdge(4), e);
   graph.addEdge(e, new UndirectedEdge(4), a);
   const city = new City(graph, graph);
-  const passenger = new Passenger(city, 'p', 2.0, a);
-  passenger.source = a;
-  passenger.destination = c;
-  passenger.start();
-  assert.deepEqual(passenger.duration, passenger.plan.top().eta);
-  assert.deepEqual(passenger.duration, 2);
+  const passengerA = new Passenger(city, 'pa', 2.0, a);
+  passengerA.source = a;
+  passengerA.destination = c;
+  passengerA.start();
+  const passengerB = new Passenger(city, 'pb', 4.0, b);
+  passengerB.source = b;
+  passengerB.destination = d;
+  passengerB.start();
+  assert.deepEqual(passengerA.duration, passengerA.plan.top().eta);
+  assert.deepEqual(passengerA.duration, 2);
+  assert.deepEqual(passengerB.duration, passengerB.plan.top().eta);
+  assert.deepEqual(passengerB.duration, 4);
 });
 
 QUnit.test('Simulate no passengers for findTopKDuration (1)', (assert) => {

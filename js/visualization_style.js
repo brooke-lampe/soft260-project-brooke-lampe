@@ -3,6 +3,7 @@
 /* eslint-disable no-magic-numbers */
 
 const transitVisualizationDefaultOptions = {
+  headingText: 'Passengers with the Longest Journeys',
   worldPadding: 12.0,
   zoomMultiplier: 0.9,
   zoomLimit: 12.0,

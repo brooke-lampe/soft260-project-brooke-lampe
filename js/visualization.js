@@ -268,6 +268,11 @@ $.widget('transit.visualization', {
         this._trigger('ready');
       },
     });
+    //  this will also work
+    //  this.overlay = $('<div class="overlay"><h1>Passengers with the Longest Journeys</h1><ul><li></li><li></li><li></li><li></li><li></li></ul></div>').appendTo(this.element);
+    this.overlay = $('<div></div>', {class: 'overlay'}).appendTo(this.element);
+    this.heading = $('<h1></h1>', {text: this.option('headingText')}).appendTo(this.overlay);
+    this.unordered = $('<ul></ul>').appendTo(this.overlay);
   },
 
   _populate() {
@@ -353,6 +358,9 @@ $.widget('transit.visualization', {
     for (const dot of this._passengerDots.values()) {
       dot.refresh();
     }
+
+    this.overlay.find('ul').empty();
+    $('<li></li>', {text: this._city.currentTime}).appendTo(this.unordered);
   },
 
   getSlowness() {

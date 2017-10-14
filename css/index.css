@@ -41,6 +41,7 @@ div.overlay {
   color: rgba(255, 255, 255, 1);
   overflow: hidden;
   pointer-events: none;
+  font-family: 'Times New Roman';
 }
 
 .controls {
