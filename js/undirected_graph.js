@@ -85,7 +85,7 @@ function shortestUndirectedPath(graph, source, destinationPredicate, projection 
         visited.add(projection(neighbor));
       }
     }
-    if (destinationPredicate(projection(workitem))) {
+    if (destinationPredicate(workitem)) {
       destination = workitem;
       break;
     }
