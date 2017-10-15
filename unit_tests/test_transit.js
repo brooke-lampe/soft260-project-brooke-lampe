@@ -611,7 +611,7 @@ QUnit.test('Simulate a passenger to check duration (2)', (assert) => {
   passenger.destination = c;
   passenger.start();
   assert.deepEqual(passenger.duration, passenger.plan.top().eta);
-  assert.deepEqual(passenger.duration, 6);
+  assert.deepEqual(passenger.duration, 4);
 });
 
 QUnit.test('Simulate passengers to check duration (3)', (assert) => {
@@ -641,9 +641,9 @@ QUnit.test('Simulate passengers to check duration (3)', (assert) => {
   passengerB.destination = d;
   passengerB.start();
   assert.deepEqual(passengerA.duration, passengerA.plan.top().eta);
-  assert.deepEqual(passengerA.duration, 2);
+  assert.deepEqual(passengerA.duration, 8);
   assert.deepEqual(passengerB.duration, passengerB.plan.top().eta);
-  assert.deepEqual(passengerB.duration, 4);
+  assert.deepEqual(passengerB.duration, 8);
 });
 
 QUnit.test('Simulate no passengers for findTopKDuration (1)', (assert) => {
@@ -743,7 +743,7 @@ QUnit.test('Simulate one more passenger than count in findTopKDuration (4)', (as
   graph.addVertex(e);
   graph.addEdge(a, new UndirectedEdge(2), b);
   graph.addEdge(b, new UndirectedEdge(2), c);
-  graph.addEdge(c, new UndirectedEdge(2), d);
+  graph.addEdge(c, new UndirectedEdge(4), d);
   graph.addEdge(d, new UndirectedEdge(2), e);
   graph.addEdge(e, new UndirectedEdge(2), a);
   const city = new City(graph, graph);
@@ -777,21 +777,9 @@ QUnit.test('Simulate more passengers than count for findTopKDuration (5)', (asse
   graph.addEdge(e, new UndirectedEdge(4), a);
   const city = new City(graph, graph);
   const passengerA = new Passenger(city, 'pa', 2.0, a);
-  passengerA.source = a;
-  passengerA.destination = c;
-  passengerA.start();
   const passengerB = new Passenger(city, 'pb', 4.0, b);
-  passengerB.source = b;
-  passengerB.destination = d;
-  passengerB.start();
   const passengerC = new Passenger(city, 'pc', 6.0, b);
-  passengerC.source = b;
-  passengerC.destination = d;
-  passengerC.start();
   const passengerD = new Passenger(city, 'pd', 8.0, a);
-  passengerD.source = a;
-  passengerD.destination = d;
-  passengerD.start();
   assert.deepEqual(city.findTopKDuration(3), [passengerB, passengerC, passengerD]);
 });
 
@@ -814,37 +802,13 @@ QUnit.test('Simulate many more passengers than count for findTopKDuration (6)', 
   graph.addEdge(e, new UndirectedEdge(4), a);
   const city = new City(graph, graph);
   const passengerA = new Passenger(city, 'pa', 2.0, a);
-  passengerA.source = a;
-  passengerA.destination = c;
-  passengerA.start();
   const passengerB = new Passenger(city, 'pb', 4.0, b);
-  passengerB.source = b;
-  passengerB.destination = d;
-  passengerB.start();
   const passengerC = new Passenger(city, 'pc', 6.0, b);
-  passengerC.source = b;
-  passengerC.destination = d;
-  passengerC.start();
   const passengerD = new Passenger(city, 'pd', 8.0, a);
-  passengerD.source = a;
-  passengerD.destination = d;
-  passengerD.start();
   const passengerE = new Passenger(city, 'pe', 9.0, a);
-  passengerE.source = a;
-  passengerE.destination = d;
-  passengerE.start();
   const passengerF = new Passenger(city, 'pf', 7.0, a);
-  passengerF.source = a;
-  passengerF.destination = d;
-  passengerF.start();
   const passengerG = new Passenger(city, 'pg', 5.0, a);
-  passengerG.source = a;
-  passengerG.destination = d;
-  passengerG.start();
   const passengerH = new Passenger(city, 'ph', 3.0, a);
-  passengerH.source = a;
-  passengerH.destination = d;
-  passengerH.start();
   assert.deepEqual(city.findTopKDuration(2), [passengerD, passengerE]);
 });
 
@@ -867,37 +831,13 @@ QUnit.test('Simulate many passengers and many count for findTopKDuration (7)', (
   graph.addEdge(e, new UndirectedEdge(4), a);
   const city = new City(graph, graph);
   const passengerA = new Passenger(city, 'pa', 2.0, a);
-  passengerA.source = a;
-  passengerA.destination = c;
-  passengerA.start();
   const passengerB = new Passenger(city, 'pb', 4.0, b);
-  passengerB.source = b;
-  passengerB.destination = d;
-  passengerB.start();
   const passengerC = new Passenger(city, 'pc', 6.0, b);
-  passengerC.source = b;
-  passengerC.destination = d;
-  passengerC.start();
   const passengerD = new Passenger(city, 'pd', 8.0, a);
-  passengerD.source = a;
-  passengerD.destination = d;
-  passengerD.start();
   const passengerE = new Passenger(city, 'pe', 9.0, a);
-  passengerE.source = a;
-  passengerE.destination = d;
-  passengerE.start();
   const passengerF = new Passenger(city, 'pf', 7.0, a);
-  passengerF.source = a;
-  passengerF.destination = d;
-  passengerF.start();
   const passengerG = new Passenger(city, 'pg', 5.0, a);
-  passengerG.source = a;
-  passengerG.destination = d;
-  passengerG.start();
   const passengerH = new Passenger(city, 'ph', 3.0, a);
-  passengerH.source = a;
-  passengerH.destination = d;
-  passengerH.start();
   assert.deepEqual(city.findTopKDuration(6), [passengerB, passengerC, passengerD, passengerE, passengerF, passengerG]);
 });
 
