@@ -40,26 +40,34 @@ class Subwidget {
   }
 
   get element() {
+    console.assert(!this.destroyed, `Tried to access the element of the destroyed widget ${this}.`);
     return this._element;
   }
 
   get highlight() {
+    console.assert(!this.destroyed, `Tried to access the highlight of the destroyed widget ${this}.`);
     return this._highlight;
   }
 
   get highlighted() {
+    console.assert(!this.destroyed, `Tried to access the highlightedness of the destroyed widget ${this}.`);
     return this._highlight.getAttribute('opacity') > 0;
   }
 
   set highlighted(highlighted) {
-    return this._highlight.setAttribute('opacity', highlighted ? 1.0 : 0.0);
+    console.assert(!this.destroyed || !highlighted, `Tried to highlight the destroyed widget ${this}.`);
+    if (!this.destroyed) {
+      this._highlight.setAttribute('opacity', highlighted ? 1.0 : 0.0);
+    }
   }
 
   get clickable() {
+    console.assert(!this.destroyed, `Tried to access the clickability of the destroyed widget ${this}.`);
     return $(this._element).css('pointer-events') !== 'none';
   }
 
   set clickable(clickable) {
+    console.assert(!this.destroyed, `Tried to change the clickability of the destroyed widget ${this}.`);
     $(this._element).css('pointer-events', clickable ? 'auto' : 'none');
   }
 }
