@@ -3,8 +3,7 @@ Prototype Public Transit Simulator
 
 In the prototype's current state, the map, number of passengers, initial
 simulation speed, etc., are all hard-coded, and passengers choose destinations
-at random.  Routes are required to be either simple or two-vertex cycles.  No
-statistics are collected yet.
+at random.  Routes are required to be either simple or two-vertex cycles.  The prototype collects statistics with regard to plan duration.  The passengers with the longest plan duration are shown and updated as the simulation runs.
 
 There are a number of outstanding bugs, some of which are noted below.
 
@@ -40,8 +39,6 @@ Adding Routes
 *   Select nothing and then click "Add Route" to add a route:
     *   Start the route by clicking a vertex.
     *   Click another, unhighlighted vertex to extend the route (if possible).
-        (This part of the code is a little buggy and sometimes extends the
-        route in strange, roundabout ways.)
     *   Click a highlighted vertex to retract the route.
     *   Click the original vertex to complete the route (if possible) and then
         automatically select the completed route.
@@ -52,8 +49,7 @@ Changing Routes
 *   Select a route and then click "Change Route" to change it:
     *   Start the new portion of the route by clicking a vertex on the route.
     *   Click another, unhighlighted vertex to extend the new portion (if
-        possible).  (This part of the code is a little buggy and sometimes
-        extends the new portion in strange, roundabout ways.)
+        possible).
     *   Click a highlighted vertex to retract the new portion.
     *   Click elsewhere on the route to complete the change (if possible).
 
