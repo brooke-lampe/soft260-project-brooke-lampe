@@ -970,9 +970,6 @@ QUnit.test('simulate a passenger taking a combined walking/riding path', (assert
   time = city.step();
   assert.deepEqual(time, 26);
   assert.deepEqual(passenger.vertex, d);
-  time = city.step();
-  assert.deepEqual(time, 30);
-  assert.deepEqual(x.vertex, e);
 });
 
 QUnit.test('simulate restarting a bus\'s decision making while a passenger is boarding', (assert) => {
@@ -1300,9 +1297,6 @@ QUnit.test('simulate a passenger continuing to ride after the bus they are ridin
   time = city.step();
   assert.deepEqual(time, 11);
   assert.deepEqual(passenger.vertex, c);
-  time = city.step();
-  assert.deepEqual(time, 16);
-  assert.deepEqual(x.vertex, a);
 });
 
 QUnit.test('simulate a passenger replanning after their bus is stopped while they are at a vertex', (assert) => {
