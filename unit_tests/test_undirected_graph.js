@@ -205,7 +205,7 @@ QUnit.test('find the shortest path in a diamond while exercising the projection 
   graph.addEdge('d', new UndirectedEdge(5), 'a');
   graph.addEdge('b', new UndirectedEdge(5), 'd');
   // the search should find the shortest path in terms of number of vertices, not total weighted length
-  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'c', projection), ['a', 'd']);
+  assert.deepEqual(shortestUndirectedPath(graph, 'a', (vertex) => vertex === 'd', projection), ['a', 'd']);
 });
 
 QUnit.test('find the shortest path as determined by the projection parameter', (assert) => {
