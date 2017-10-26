@@ -1,4 +1,5 @@
 /* exported SimulationEvent Simulation Decision Agent */
+/* globals PriorityQueue */
 
 class SimulationEvent {
   constructor(time, effect) {
@@ -10,13 +11,13 @@ class SimulationEvent {
 class Simulation {
   constructor() {
     this.currentTime = 0;
-    this.pendingEvents = [];
+    this.pendingEvents = new PriorityQueue((event) => event.time);
   }
 
   addEvent(event) {
     console.assert(event.time > this.currentTime,
       `Added the event ${event} at time ${event.time}, which is not in the future because the current time is ${this.currentTime}.`);
-    this.pendingEvents.push(event);
+    this.pendingEvents.enqueue(event);
   }
 
   removeEvent(event) {
@@ -24,16 +25,16 @@ class Simulation {
   }
 
   get nextTime() {
-    const nextIndex = this.pendingEvents.indexOfMinimum((event) => event.time);
-    return nextIndex !== undefined ? this.pendingEvents[nextIndex].time : undefined;
+    const nextEvent = this.pendingEvents.peek();
+    return nextEvent !== undefined ? nextEvent.time : undefined;
   }
 
   _dequeueNextEvent(horizon = Infinity) {
-    const nextIndex = this.pendingEvents.indexOfMinimum((event) => event.time <= horizon ? event.time : Infinity);
-    if (nextIndex === undefined || this.pendingEvents[nextIndex].time > horizon) {
+    const nextEvent = this.pendingEvents.peek();
+    if (nextEvent === undefined || nextEvent.time > horizon) {
       return undefined;
     }
-    return this.pendingEvents.remove(nextIndex);
+    return this.pendingEvents.dequeue();
   }
 
   step() {

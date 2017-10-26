@@ -60,8 +60,7 @@ Changing Routes
 Retiring Routes
 ----------------
 
-*   Select a route and then click "Retire Route" to retire it.  (This part of
-    the code is a little buggy and will break the simulation.)
+*   Select a route and then click "Retire Route" to retire it.
 
 Adding Buses
 ------------
@@ -73,5 +72,4 @@ Adding Buses
 Stopping Buses
 --------------
 
-*   Select a bus and click "Stop Bus" to stop it.  (This part of the code is a
-    little buggy and will break the simulation.)
+*   Select a bus and click "Stop Bus" to stop it.

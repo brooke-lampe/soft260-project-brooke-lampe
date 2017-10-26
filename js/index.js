@@ -318,7 +318,7 @@ const main = new Coprogram(function*main() {
     if (event.originalEvent !== undefined && event.originalEvent.type === 'click') {
       if (event.entity === undefined) {
         selection = undefined;
-      } else if (event.entity instanceof Bus || event.entity instanceof Passenger) {
+      } else if (event.entity instanceof Bus && !event.entity.stopping || event.entity instanceof Passenger) {
         selection = event.entity;
       } else if (event.entity instanceof PositionedVertex || event.entity instanceof PositionedEdge) {
         // Rotate through matching routes when a vertex or edge is clicked.
@@ -326,7 +326,7 @@ const main = new Coprogram(function*main() {
         selection = undefined;
         for (let index = startingIndex; index < city.routes.length; ++index) {
           const candidate = city.routes[index];
-          if (candidate !== undefined && (candidate.has(event.entity) || hasEdge(candidate, event.entity))) {
+          if (candidate !== undefined && !candidate.moribund && (candidate.has(event.entity) || hasEdge(candidate, event.entity))) {
             selection = candidate;
             break;
           }

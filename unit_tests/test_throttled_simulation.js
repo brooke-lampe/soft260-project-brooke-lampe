@@ -40,7 +40,7 @@ QUnit.test('step through events at constant speed', (assert) => {
     case 3:
       assert.deepEqual(throttled.currentTime, 4);
       assert.deepEqual(result, [2, 3, 4]);
-      assert.deepEqual(simulation.pendingEvents, []);
+      assert.deepEqual(simulation.pendingEvents.elements, []);
       done();
       break;
     default:
@@ -92,7 +92,7 @@ QUnit.test('step through events at variable speed, changing speed at an event', 
     case 4:
       assert.deepEqual(throttled.currentTime, 4);
       assert.deepEqual(result, [2, 3, 4]);
-      assert.deepEqual(simulation.pendingEvents, []);
+      assert.deepEqual(simulation.pendingEvents.elements, []);
       done();
       break;
     default:

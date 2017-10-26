@@ -347,7 +347,30 @@ QUnit.test('get next ETA of bus returning to location', (assert) => {
   assert.deepEqual(x.getETA(a, 3.0), 4.0);
 });
 
-QUnit.test('get ETA of a stopped bus', (assert) => {
+QUnit.test('get ETA of a stopped bus at a vertex', (assert) => {
+  const a = new Vertex('a');
+  const b = new Vertex('b');
+  const c = new Vertex('c');
+  const graph = new UndirectedGraph();
+  graph.addVertex(a);
+  graph.addVertex(b);
+  graph.addVertex(c);
+  graph.addEdge(a, new UndirectedEdge(2.0), b);
+  graph.addEdge(b, new UndirectedEdge(2.0), c);
+  graph.addEdge(a, new UndirectedEdge(2.0), c);
+  const city = new City(graph, graph);
+  const route = new Route(city, a, c);
+  route.patch(a, b, c);
+  const x = new Bus(route.getArc(a));
+  x.addPassenger(new Passenger(city, 'p', 3.0, a));
+  x._decide();
+  x.stop();
+  assert.deepEqual(x.getETA(a), 0.0);
+  assert.deepEqual(x.getETA(b), 2.0);
+  assert.deepEqual(x.getETA(c), Infinity);
+});
+
+QUnit.test('get ETA of a stopped bus mid-arc', (assert) => {
   const a = new Vertex('a');
   const b = new Vertex('b');
   const c = new Vertex('c');

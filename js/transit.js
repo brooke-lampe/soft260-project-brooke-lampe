@@ -218,6 +218,7 @@ class Arc {
 class Route {
   constructor(city, firstVertex, secondVertex) {
     this.city = city;
+    this.moribund = false;
     let index = undefined;
     for (let i = 0; i < city.routes.length; ++i) {
       if (city.routes[i] === undefined) {
@@ -238,19 +239,23 @@ class Route {
     city.restart();
   }
 
-  retire() {
-    if (this.buses.size === 0) {
+  _maybeDispose() {
+    if (this.moribund && this.buses.size === 0) {
       this.city.routes[this.city.routes.indexOf(this)] = undefined;
-    } else {
-      for (const bus of this.buses) {
-        bus.stop();
-      }
     }
-    this.city.routes[this.city.routes.indexOf(this)] = undefined;
+  }
+
+  retire() {
+    this.moribund = true;
+    for (const bus of this.buses) {
+      bus.stop();
+    }
+    this._maybeDispose();
   }
 
   removeBus(bus) {
     this.buses.delete(bus);
+    this._maybeDispose();
   }
 
   has(vertex) {
@@ -294,6 +299,7 @@ class Route {
   patch(...path) {
     console.assert(path[0] !== path[path.length - 1], 'Error: The first and last vertices of the path are the same.');
     console.assert(path.length > 1, 'Error: Patching path must be greater than 1');
+    console.assert(!this.moribund, `Tried to modify the moribund route ${this}.`);
 
     // order matters:
     for (let i = path.length - 1; i--;) {
@@ -321,10 +327,12 @@ class Route {
     let bestETA = Infinity;
     if (this.has(vertex)) {
       for (const bus of this.buses) {
-        const eta = bus.getETA(vertex, minimumETA);
-        if (eta < bestETA) {
-          result = bus;
-          bestETA = eta;
+        if (!bus.stopping) {
+          const eta = bus.getETA(vertex, minimumETA);
+          if (eta < bestETA) {
+            result = bus;
+            bestETA = eta;
+          }
         }
       }
     }
@@ -349,6 +357,7 @@ class Bus extends Agent {
     this.passengers = new Array(capacity).fill(undefined);
     this.unloadingDelay = unloadingDelay;
     this.loadingDelay = loadingDelay;
+    this.stopping = false;
     arc.route.city.restart();
   }
 
@@ -389,6 +398,7 @@ class Bus extends Agent {
   }
 
   addPassenger(passenger) {
+    console.assert(!this.stopping, `Tried to add a passenger to the stopping bus ${this}.`);
     const index = this.passengers.indexOf(undefined);
     console.assert(index > -1, `Added passenger ${passenger} to already full bus ${this}.`);
     this.passengers[index] = passenger;
@@ -398,31 +408,50 @@ class Bus extends Agent {
     const index = this.passengers.indexOf(passenger);
     console.assert(index > -1, `Removed passenger ${passenger} from the bus ${this} on which they are not riding.`);
     this.passengers[index] = undefined;
+    this._maybeDispose();
   }
 
   getETA(vertex, minimumETA = 0.0) {
-    if (minimumETA <= 0.0 && this.vertex === vertex) {
-      for (const passenger of this.passengers) {
-        if (passenger === undefined || passenger.immediateDestination === this.vertex) {
-          return 0.0;
-        }
-      }
-    }
     let result = this.eta;
     if (result === undefined) {
       result = this._arc.edge.weight;
     }
-    const seen = new Set();
-    for (let arc = this._arc.next; !seen.has(arc); arc = arc.next) {
-      if (result >= minimumETA) {
-        if (arc.originalSource.vertex === vertex) {
-          return result;
-        }
-        seen.add(arc);
+    if (this.stopping) {
+      if (this.vertex === vertex) {
+        return 0;
       }
-      result += arc.edge.weight; // optimism: ignore loading and unloading delays
+      if (this._arc.destination.vertex === vertex) {
+        return result;
+      }
+    } else {
+      if (minimumETA <= 0.0 && this.vertex === vertex) {
+        for (const passenger of this.passengers) {
+          if (passenger === undefined || passenger.immediateDestination === this.vertex) {
+            return 0.0;
+          }
+        }
+      }
+      const seen = new Set();
+      for (let arc = this._arc.next; !seen.has(arc); arc = arc.next) {
+        if (result >= minimumETA) {
+          if (arc.originalSource.vertex === vertex) {
+            return result;
+          }
+          seen.add(arc);
+        }
+        result += arc.edge.weight; // optimism: ignore loading and unloading delays
+      }
     }
     return Infinity;
+  }
+
+  _maybeDispose() {
+    if (this.stopping && this.vertex !== undefined && this.passengers.every((passenger) => passenger === undefined)) {
+      const arc = this._arc;
+      this._arc = undefined;
+      arc.removeBus(this);
+      this.restart();
+    }
   }
 
   _arrive() {
@@ -433,17 +462,21 @@ class Bus extends Agent {
     oldArc.removeBus(this);
     this._departureTime = undefined;
     this._arrivalTime = undefined;
+    this._maybeDispose();
   }
 
   stop() {
-    const arc = this._arc;
-    this._arc = undefined;
-    arc.removeBus(this);
-    arc.route.city.restart();
+    this.stopping = true;
+    // order matters
+    this._arc.route.city.restart();
+    this._maybeDispose();
   }
 
   _decide() {
-    console.assert(this._arc !== undefined, `Attempted to make a decision for the bus ${this}, which has been stopped.`);
+    // completely stopped
+    if (this._arc === undefined) {
+      return undefined;
+    }
     // wait (unloading)
     if (this._alightingPassenger !== undefined) {
       return new Decision(this._waitingTime - this.simulation.currentTime, () => {
@@ -469,7 +502,7 @@ class Bus extends Agent {
     }
     // unload
     for (const passenger of this.passengers) {
-      if (passenger !== undefined && passenger.immediateDestination === this.vertex) {
+      if (passenger !== undefined && (passenger.immediateDestination === this.vertex || this.stopping)) {
         passenger.beginAlight(this.unloadingDelay);
         this._alightingPassenger = passenger;
         this._waitingTime = this.simulation.currentTime + this.unloadingDelay;
@@ -482,7 +515,7 @@ class Bus extends Agent {
     }
     // load
     const emptyIndex = this.passengers.indexOf(undefined);
-    if (emptyIndex > -1) {
+    if (!this.stopping && emptyIndex > -1) {
       for (const passenger of this.vertex.passengers) {
         if (passenger !== undefined && passenger.isWaitingFor(this)) {
           passenger.beginBoard(this.loadingDelay);
@@ -551,7 +584,7 @@ class PlanningGraph {
         }
       }
     }
-    result = result.reverse(); // FIXME: hack so that shortestUndirectedPath will take longer bus rides
+    result = result.reverse(); // Fix Me: hack so that shortestUndirectedPath will take longer bus rides
     for (const neighbor of this.city.walkGraph.getNeighbors(vertex.destination)) {
       const edge = this.city.walkGraph.getEdge(vertex.destination, neighbor);
       result.push(new PlanningVertex(undefined, neighbor, vertex.eta + edge.weight));
@@ -588,6 +621,15 @@ class Passenger extends Agent {
     return this.plan.top().eta;
   }
 
+  _detach(originalVertex, originalBus) {
+    if (originalVertex !== undefined && originalVertex !== this._vertex) {
+      originalVertex.removePassenger(this);
+    }
+    if (originalBus !== undefined && originalBus !== this._bus) {
+      originalBus.removePassenger(this);
+    }
+  }
+
   get vertex() {
     if (this._departureTime !== undefined && this._departureTime < this.simulation.currentTime) {
       return undefined;
@@ -596,12 +638,8 @@ class Passenger extends Agent {
   }
 
   set vertex(vertex) {
-    if (this._vertex !== undefined) {
-      this._vertex.removePassenger(this);
-    }
-    if (this._bus !== undefined) {
-      this._bus.removePassenger(this);
-    }
+    const originalVertex = this._vertex;
+    const originalBus = this._bus;
     this._vertex = vertex;
     this._bus = undefined;
     if (vertex !== undefined) {
@@ -617,6 +655,7 @@ class Passenger extends Agent {
     }
     this._departureTime = undefined;
     this._arrivalTime = undefined;
+    this._detach(originalVertex, originalBus);
   }
 
   get bus() {
@@ -624,12 +663,8 @@ class Passenger extends Agent {
   }
 
   set bus(bus) {
-    if (this._vertex !== undefined) {
-      this._vertex.removePassenger(this);
-    }
-    if (this._bus !== undefined) {
-      this._bus.removePassenger(this);
-    }
+    const originalVertex = this._vertex;
+    const originalBus = this._bus;
     this._vertex = undefined;
     this._bus = bus;
     if (bus !== undefined) {
@@ -637,6 +672,7 @@ class Passenger extends Agent {
     }
     this._departureTime = undefined;
     this._arrivalTime = undefined;
+    this._detach(originalVertex, originalBus);
   }
 
   get boarding() {
