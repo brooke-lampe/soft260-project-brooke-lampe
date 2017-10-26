@@ -1,6 +1,6 @@
 QUnit.module('transit.js');
 /* globals QUnit Vertex UndirectedEdge UndirectedGraph SimulationEvent City Route Bus Passenger */
-/* eslint-disable no-magic-numbers, no-underscore-dangle */
+/* eslint-disable no-magic-numbers, no-underscore-dangle, no-unused-vars */
 
 function waypoints(route) {
   const result = [];
