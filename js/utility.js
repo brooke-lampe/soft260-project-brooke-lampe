@@ -13,7 +13,7 @@ Array.prototype.reverse = function reverse() {
     result.push(this[i]);
   }
 
-  console.assert(length === result.length, 'Error: the length of the original array is not the same as the length of the current array');
+  console.assert(this.length === result.length, 'Error: the length of the original array is not the same as the length of the current array');
 
   return result;
 };
