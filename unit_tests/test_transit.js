@@ -468,7 +468,7 @@ QUnit.test('find a pedestrian path from a vertex to a neighbor with no shortcuts
   graph.addVertex(c);
   graph.addEdge(a, new UndirectedEdge(2), b);
   graph.addEdge(b, new UndirectedEdge(7), c);
-  graph.addEdge(a, new UndirectedEdge(8), c);
+  graph.addEdge(c, new UndirectedEdge(8), a);
   const city = new City(graph, graph);
   const passenger = new Passenger(city, 'p', 3.0, a);
   passenger.source = a;
@@ -487,14 +487,13 @@ QUnit.test('find a pedestrian path from a vertex to a neighbor with a shortcut a
   graph.addVertex(c);
   graph.addEdge(a, new UndirectedEdge(2), b);
   graph.addEdge(b, new UndirectedEdge(7), c);
-  graph.addEdge(a, new UndirectedEdge(10), c);
+  graph.addEdge(c, new UndirectedEdge(10), a);
   const city = new City(graph, graph);
   const passenger = new Passenger(city, 'p', 3.0, a);
   passenger.source = a;
   passenger.destination = c;
   passenger._plan();
-  // the search should find the shortest path in terms of number of vertices, not total weighted length
-  assert.deepEqual(instructions(passenger.plan, city), ['walk to c at time 10']);
+  assert.deepEqual(instructions(passenger.plan, city), ['walk to c at time 9']);
 });
 
 QUnit.test('find a pedestrian path from a vertex to a neighbor with a useful bus route', (assert) => {
@@ -528,7 +527,7 @@ QUnit.test('find a pedestrian path from a vertex to a neighbor with a useful bus
   passenger.source = a;
   passenger.destination = c;
   passenger._plan();
-  assert.deepEqual(instructions(passenger.plan, city), ['route 0 to c at time 14']);
+  assert.deepEqual(instructions(passenger.plan, city), ['route 0 to c at time 10']);
 });
 
 QUnit.test('find a pedestrian path from a vertex to a neighbor with both walking and bus riding', (assert) => {

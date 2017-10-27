@@ -12,7 +12,7 @@ QUnit.test('do not start a patch from a vertex not on the route', (assert) => {
   graph.addVertex(c);
   graph.addEdge(a, new UndirectedEdge(1), b);
   graph.addEdge(b, new UndirectedEdge(1), c);
-  graph.addEdge(a, new UndirectedEdge(1), c);
+  graph.addEdge(c, new UndirectedEdge(1), a);
   const city = new City(graph, graph);
   const route = new Route(city, a, b);
   const patch = new Patch(graph, route);
