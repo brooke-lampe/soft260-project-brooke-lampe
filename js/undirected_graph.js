@@ -130,7 +130,6 @@ function shortestUndirectedPath(graph, source, destinationPredicate, projection 
     vertex = path.get(vertex);
   }
 
-  /*
   if (array.length === 1) {
     console.assert(array[0] === source, 'Path failed to begin at the source');
     console.assert(destinationPredicate(array[0]), 'Endpoint failed to satisfy the destination predicate');
@@ -140,11 +139,10 @@ function shortestUndirectedPath(graph, source, destinationPredicate, projection 
     console.assert(destinationPredicate(endpoint), 'Endpoint failed to satisfy the destination predicate');
     console.assert(!array.every(destinationPredicate), 'Non-endpoint vertices satisfy destination predicate');
     array.push(endpoint);
-    if (graph.adjacencyMatrix !== undefined) {
-      console.assert(array.every((value, index) => graph.adjacencyMatrix[index][index + 1] !== undefined || array.length <= index + 1), 'Adjacent vertices do not correspond to edges');
+    if (graph !== undefined) {
+      console.assert(array.every((value, index) => array.length <= index + 1 || graph.getEdge(array[index], array[index + 1]) !== undefined), 'Adjacent vertices do not correspond to edges');
     }
   }
-  */
 
   return array.concat();
 
