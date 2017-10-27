@@ -493,7 +493,7 @@ QUnit.test('find a pedestrian path from a vertex to a neighbor with a shortcut a
   passenger.source = a;
   passenger.destination = c;
   passenger._plan();
-  assert.deepEqual(instructions(passenger.plan, city), ['walk to c at time 9']);
+  assert.deepEqual(instructions(passenger.plan, city), ['walk to b at time 2', 'walk to c at time 9']);
 });
 
 QUnit.test('find a pedestrian path from a vertex to a neighbor with a useful bus route', (assert) => {
@@ -527,7 +527,7 @@ QUnit.test('find a pedestrian path from a vertex to a neighbor with a useful bus
   passenger.source = a;
   passenger.destination = c;
   passenger._plan();
-  assert.deepEqual(instructions(passenger.plan, city), ['route 0 to c at time 10']);
+  assert.deepEqual(instructions(passenger.plan, city), ['route 0 to c at time 14']);
 });
 
 QUnit.test('find a pedestrian path from a vertex to a neighbor with both walking and bus riding', (assert) => {
